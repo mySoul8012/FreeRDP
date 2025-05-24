@@ -9,9 +9,7 @@ jobs:
   build:
     runs-on:  macos-13
 
-    env:
-      SDL2_TTF_INCLUDE_DIRS: /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
-      SDL2_TTF_LIBRARIES: /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
+
 
     steps:
       - name: Checkout code
@@ -51,7 +49,7 @@ jobs:
 
       - name: ls FreeRDP
         run: |
-          ls /usr/local/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
+          ls /usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2
           
       - name: Create build directory
         run: |
@@ -74,15 +72,13 @@ jobs:
               -DWITH_CLIENT_SDL_VERSIONED=OFF \
               -DWITH_SDL2_TTF=ON \
               -DWITH_SDL3_TTF=OFF \
-              -DCMAKE_C_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/opt/sdl2_ttf/include/SDL2" \
-              -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/opt/sdl2_ttf/include/SDL2" \
+              -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
+              -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
               -G Ninja
 
       - name: Build and install
         run: |
           cd FreeRDP/build
-          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2"
-          export SDL2_TTF_LIBRARIES="/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
           ninja
 
       - name: Copy built binary to output folder
