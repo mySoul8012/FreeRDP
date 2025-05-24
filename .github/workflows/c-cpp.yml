@@ -4,53 +4,55 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up Homebrew
-        run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          brew update
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Install dependencies
         run: |
-          brew install cmake pkg-config cairo openssl
+          # 安装 Homebrew（如果尚未安装）
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          
+          # 安装构建工具和依赖项
+          brew install \
+            ffmpeg \
+            cjson \
+            opus \
+            cairo \
+            json-c \
+            libsystemd \
+            pkg-config \
+            cmake \
+            ninja
 
-      - name: Configure FreeRDP with disabled Opus and FFmpeg
+      - name: Clone FreeRDP repository
         run: |
-          cmake -S . -B build \
-            -DWITH_OPUS=OFF \
-            -DWITH_FFMPEG=OFF \
-            -DWITH_FAAC=OFF \
-            -DWITH_FAAD2=OFF \
-            -DWITH_LAME=OFF \
-            -DWITH_GSM=OFF \
-            -DWITH_OPENH264=OFF \
-            -DWITH_JPEG=OFF \
-            -DWITH_X264=OFF \
-            -DWITH_OPENCL=OFF \
-            -DWITH_PC=OFF \
-            -DWITH_PCSC=OFF \
-            -DWITH_CUPS=OFF \
-            -DWITH_ALSA=OFF \
-            -DWITH_PULSE=OFF \
-            -DWITH_SDL=OFF \
-            -DWITH_WEBVIEW_QT=OFF \
-            -DWITH_WINPR_DEPRECATED=OFF
+          git clone https://github.com/FreeRDP/FreeRDP.git
+          cd FreeRDP
 
-      - name: Build FreeRDP
+      - name: Create build directory
         run: |
-          cmake --build build --parallel
+          mkdir build
+          cd build
 
-      - name: Install FreeRDP
+      - name: Configure build options
         run: |
-          cmake --install build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=/usr/local \
+            -DWITH_CAIRO=ON \
+            -DWITH_FFMPEG=ON \
+            -DWITH_OPUS=ON \
+            -DWITH_JSONC=ON \
+            -DWITH_SYSTEMD=ON \
+            -G Ninja
+
+      - name: Build and install
+        run: |
+          ninja
+          sudo ninja install
