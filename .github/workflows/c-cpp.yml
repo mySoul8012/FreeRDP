@@ -48,6 +48,8 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
+          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/opt/sdl2_ttf/include"
+          export SDL2_TTF_LIBRARIES="/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -57,9 +59,6 @@ jobs:
             -DWITH_JSONC=ON \
             -DWITH_LIBSYSTEMD=OFF \
             -DWITH_SDL2=ON \
-            -DSDL2_INCLUDE_DIR=/opt/homebrew/Cellar/sdl2/2.28.3/include/SDL2 \
-            -DSDL2_TTF_INCLUDE_DIR=/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2 \
-            -DSDL2_TTF_LIBRARY=/opt/homebrew/Cellar/sdl2_ttf/2.24.0/lib/libSDL2_ttf.dylib \
             -DWITH_SDL3=OFF \
             -DWITH_CLIENT_SDL_VERSIONED=OFF \
             -DWITH_SDL2_TTF=ON \
