@@ -52,6 +52,7 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
+          export CMAKE_C_FLAGS="-I/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2"
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -65,8 +66,6 @@ jobs:
             -DWITH_CLIENT_SDL_VERSIONED=OFF \
             -DWITH_SDL2_TTF=ON \
             -DWITH_SDL3_TTF=OFF \
-            -DSDL2_TTF_INCLUDE_DIRS=/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2 \
-            -DSDL2_TTF_LIBRARIES=/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib \
             -G Ninja
 
       - name: Build and install
