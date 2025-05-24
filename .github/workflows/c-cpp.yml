@@ -1,0 +1,56 @@
+name: Build FreeRDP for macOS ARM64
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: macos-14  # 使用 macOS 14 ARM64 Runner
+
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装构建依赖
+        run: |
+          brew update
+          brew install cmake ninja openssl pkg-config
+
+      - name: 配置构建参数
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -GNinja \
+            -DCMAKE_OSX_ARCHITECTURES=arm64 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DWITH_SSE=OFF \
+            -DWITH_NEON=ON \
+            -DWITH_FFMPEG=OFF \
+            -DWITH_WEBVIEW=OFF \
+            -DWITH_OPUS=ON \
+            -DWITH_FAAD2=ON \
+            -DWITH_FAAC=ON \
+            -DWITH_INTERNAL_RC4=ON \
+            -DWITH_INTERNAL_MD4=ON \
+            -DWITH_INTERNAL_MD5=ON
+
+      - name: 编译项目
+        run: |
+          cd build
+          ninja
+
+      - name: 安装构建产物
+        run: |
+          cd build
+          ninja install
+
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: freerdp-macos-arm64
+          path: /usr/local/bin/xfreerdp
