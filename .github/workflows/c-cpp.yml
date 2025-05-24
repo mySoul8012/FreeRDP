@@ -40,7 +40,7 @@ jobs:
 
       - name: Check SDL_ttf.h
         run: |
-          sudo find / -name SDL_ttf.h
+          sudo find /usr/local/ -name SDL_ttf.h
 
 
       - name: ls FreeRDP
