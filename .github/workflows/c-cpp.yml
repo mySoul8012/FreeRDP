@@ -1,4 +1,4 @@
-name: Build FreeRDP for macOS ARM64
+name: Build FreeRDP for macOS ARM64 (Disable Opus)
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
             -DWITH_NEON=ON \
             -DWITH_FFMPEG=OFF \
             -DWITH_WEBVIEW=OFF \
-            -DWITH_OPUS=ON \
+            -DWITH_OPUS=OFF \
             -DWITH_FAAD2=ON \
             -DWITH_FAAC=OFF \
             -DWITH_INTERNAL_RC4=ON \
