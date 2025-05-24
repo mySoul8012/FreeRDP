@@ -1,4 +1,4 @@
-name: Build FreeRDP for macOS ARM64 (Disable Opus)
+name: Build FreeRDP for macOS ARM64 (Disable FFmpeg and Opus)
 
 on:
   push:
@@ -30,7 +30,6 @@ jobs:
             -DWITH_SSE=OFF \
             -DWITH_NEON=ON \
             -DWITH_FFMPEG=OFF \
-            -DWITH_WEBVIEW=OFF \
             -DWITH_OPUS=OFF \
             -DWITH_FAAD2=ON \
             -DWITH_FAAC=OFF \
