@@ -3,7 +3,7 @@ name: Build FreeRDP
 on:
   push:
     branches:
-      - main
+      - '**'  # 监听所有分支的提交事件
 
 jobs:
   build:
