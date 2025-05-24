@@ -1,54 +1,74 @@
-name: Build FreeRDP for macOS ARM64 (Disable FFmpeg and Opus)
+name: Build FreeRDP for macOS ARM64
 
 on:
   push:
     branches:
-      - '**'  # 监听所有分支的提交事件
+      - main
+    paths:
+      - '**/*.cpp'
+      - '**/*.h'
+      - 'CMakeLists.txt'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.cpp'
+      - '**/*.h'
+      - 'CMakeLists.txt'
 
 jobs:
   build:
-    runs-on: macos-14  # 使用 macOS 14 ARM64 Runner
-
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        architecture: [arm64]
     steps:
-      - name: 检出代码
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: 安装构建依赖
+      - name: Set up Homebrew
         run: |
-          brew update
-          brew install cmake ninja openssl pkg-config faad2
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo "/opt/homebrew/bin" >> $GITHUB_PATH
 
-      - name: 配置构建参数
+      - name: Install dependencies
         run: |
-          mkdir build
-          cd build
-          cmake .. \
-            -GNinja \
+          brew install cmake ninja pkg-config
+          brew install openssl@3 cairo json-c opus ffmpeg
+
+      - name: Set environment variables for OpenSSL
+        run: |
+          echo "PKG_CONFIG_PATH=$(brew --prefix openssl@3)/lib/pkgconfig" >> $GITHUB_ENV
+
+      - name: Configure FreeRDP build
+        run: |
+          cmake -G Ninja \
             -DCMAKE_OSX_ARCHITECTURES=arm64 \
-            -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
             -DCMAKE_BUILD_TYPE=Release \
-            -DWITH_SSE=OFF \
-            -DWITH_NEON=ON \
+            -DCMAKE_INSTALL_PREFIX=$HOME/freerdp \
+            -DWITH_SAMPLE=ON \
+            -DWITH_SERVER=OFF \
             -DWITH_FFMPEG=OFF \
-            -DWITH_OPUS=OFF \
-            -DWITH_FAAD2=ON \
+            -DWITH_OPENH264=OFF \
+            -DWITH_GSM=OFF \
+            -DWITH_LAME=OFF \
             -DWITH_FAAC=OFF \
-            -DWITH_INTERNAL_RC4=ON \
-            -DWITH_INTERNAL_MD4=ON \
-            -DWITH_INTERNAL_MD5=ON
+            -DWITH_OPUS=OFF \
+            -DWITH_JSONC=OFF \
+            -DWITH_PCSC=OFF \
+            ..
 
-      - name: 编译项目
+      - name: Build FreeRDP
         run: |
-          cd build
-          ninja
+          cmake --build . --target install
 
-      - name: 安装构建产物
+      - name: Create macOS application bundle
         run: |
-          cd build
-          ninja install
+          ./scripts/bundle-mac-os.sh
 
-      - name: 上传构建产物
-        uses: actions/upload-artifact@v4
+      - name: Upload macOS ARM64 build artifact
+        uses: actions/upload-artifact@v3
         with:
-          name: freerdp-macos-arm64
-          path: /usr/local/bin/xfreerdp
+          name: freerdp-arm64
+          path: MacFreeRDP.app
