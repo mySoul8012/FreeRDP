@@ -31,15 +31,15 @@ jobs:
       - name: Clone FreeRDP repository
         run: |
           git clone https://github.com/FreeRDP/FreeRDP.git
-          cd FreeRDP
 
       - name: Create build directory
         run: |
+          cd FreeRDP
           mkdir build
-          cd build
 
       - name: Configure build options
         run: |
+          cd FreeRDP/build
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_INSTALL_PREFIX=/usr/local \
@@ -52,5 +52,6 @@ jobs:
 
       - name: Build and install
         run: |
+          cd FreeRDP/build
           ninja
           sudo ninja install
