@@ -42,8 +42,11 @@ jobs:
       - name: ls FreeRDP
         run: |
           ls /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
-          ls /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
 
+      - name: ls FreeRDP
+        run: |
+          ls /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
+          
       - name: Create build directory
         run: |
           cd FreeRDP
