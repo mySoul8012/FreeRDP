@@ -50,7 +50,6 @@ jobs:
             -DWITH_OPUS=ON \
             -DWITH_JSONC=ON \
             -DWITH_LIBSYSTEMD=OFF \
-            # 只启用 SDL2，禁用 SDL3 及其 TTF
             -DWITH_SDL2=ON \
             -DWITH_SDL3=OFF \
             -DWITH_CLIENT_SDL_VERSIONED=OFF \
