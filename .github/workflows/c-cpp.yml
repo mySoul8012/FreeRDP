@@ -39,6 +39,12 @@ jobs:
           git clone https://github.com/FreeRDP/FreeRDP.git
 
 
+
+      - name: Check SDL_ttf.h
+        run: |
+          sudo find /opt/homebrew -name SDL_ttf.h
+
+
       - name: ls FreeRDP
         run: |
           ls /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
