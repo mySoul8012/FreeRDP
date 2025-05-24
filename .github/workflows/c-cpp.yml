@@ -30,6 +30,10 @@ jobs:
             sdl2 \
             sdl2_ttf
 
+      - name: SDL2_ttf
+        run: |
+          brew --prefix sdl2_ttf
+
       - name: Clone FreeRDP repository
         run: |
           git clone https://github.com/FreeRDP/FreeRDP.git
