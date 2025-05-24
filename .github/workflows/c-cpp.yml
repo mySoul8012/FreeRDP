@@ -46,7 +46,7 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
-          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/opt/sdl2_ttf/include"
+          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/opt/sdl2_ttf/include/SDL2"
           export SDL2_TTF_LIBRARIES="/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
