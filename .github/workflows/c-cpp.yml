@@ -29,10 +29,6 @@ jobs:
             ninja \
             sdl2 \
             sdl2_ttf
-
-      - name: SDL2_ttf
-        run: |
-          find / -name SDL_ttf.h
           
       - name: Clone FreeRDP repository
         run: |
@@ -46,7 +42,7 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
-          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/opt/sdl2_ttf/include/SDL2"
+          export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2"
           export SDL2_TTF_LIBRARIES="/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
