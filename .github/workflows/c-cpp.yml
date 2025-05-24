@@ -16,7 +16,7 @@ jobs:
       - name: 安装构建依赖
         run: |
           brew update
-          brew install cmake ninja openssl pkg-config
+          brew install cmake ninja openssl pkg-config faad2
 
       - name: 配置构建参数
         run: |
