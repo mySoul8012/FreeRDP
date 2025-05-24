@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on:  macos-13
 
     env:
       SDL2_TTF_INCLUDE_DIRS: /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
