@@ -78,5 +78,17 @@ jobs:
           export SDL2_TTF_INCLUDE_DIRS="/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2"
           export SDL2_TTF_LIBRARIES="/opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib"
           ninja
-          sudo ninja install
+
+      - name: Copy built binary to output folder
+        run: |
+          mkdir -p ${{ github.workspace }}/output
+          cp FreeRDP/build/client/SDL/xfreerdp ${{ github.workspace }}/output/
+
+      - name: Upload FreeRDP binary as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: freerdp-binary
+          path: ${{ github.workspace }}/output/xfreerdp
+        
+
 
