@@ -55,21 +55,22 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
-          export CMAKE_C_FLAGS="-I/opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2"
-          cmake .. \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_INSTALL_PREFIX=/usr/local \
-            -DWITH_CAIRO=ON \
-            -DWITH_FFMPEG=ON \
-            -DWITH_OPUS=ON \
-            -DWITH_JSONC=ON \
-            -DWITH_LIBSYSTEMD=OFF \
-            -DWITH_SDL2=OFF \
-            -DWITH_SDL3=OFF \
-            -DWITH_CLIENT_SDL_VERSIONED=OFF \
-            -DWITH_SDL2_TTF=OFF \
-            -DWITH_SDL3_TTF=OFF \
-            -G Ninja
+            cmake .. \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DCMAKE_INSTALL_PREFIX=/usr/local \
+              -DWITH_CAIRO=ON \
+              -DWITH_FFMPEG=ON \
+              -DWITH_OPUS=ON \
+              -DWITH_JSONC=ON \
+              -DWITH_LIBSYSTEMD=OFF \
+              -DWITH_SDL2=ON \
+              -DWITH_SDL3=OFF \
+              -DWITH_CLIENT_SDL_VERSIONED=OFF \
+              -DWITH_SDL2_TTF=ON \
+              -DWITH_SDL3_TTF=OFF \
+              -DCMAKE_C_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/opt/sdl2_ttf/include/SDL2" \
+              -DCMAKE_CXX_FLAGS="-I/opt/homebrew/include -I/opt/homebrew/opt/sdl2_ttf/include/SDL2" \
+              -G Ninja
 
       - name: Build and install
         run: |
