@@ -42,12 +42,12 @@ jobs:
 
       - name: Check SDL_ttf.h
         run: |
-          sudo find /opt/homebrew -name SDL_ttf.h
+          sudo find / -name SDL_ttf.h
 
 
       - name: ls FreeRDP
         run: |
-          ls /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
+          ls /usr/local/Cellar/sdl2_ttf/2.24.
 
       - name: ls FreeRDP
         run: |
