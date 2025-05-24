@@ -63,3 +63,4 @@ jobs:
           cd FreeRDP/build
           ninja
           sudo ninja install
+
