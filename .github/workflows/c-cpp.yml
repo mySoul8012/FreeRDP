@@ -33,7 +33,7 @@ jobs:
             -DWITH_WEBVIEW=OFF \
             -DWITH_OPUS=ON \
             -DWITH_FAAD2=ON \
-            -DWITH_FAAC=ON \
+            -DWITH_FAAC=OFF \
             -DWITH_INTERNAL_RC4=ON \
             -DWITH_INTERNAL_MD4=ON \
             -DWITH_INTERNAL_MD5=ON
