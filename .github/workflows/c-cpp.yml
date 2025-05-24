@@ -17,7 +17,7 @@ jobs:
         run: |
           # 安装 Homebrew（如果尚未安装）
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          
+
           # 安装构建工具和依赖项
           brew install \
             ffmpeg \
