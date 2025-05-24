@@ -32,9 +32,7 @@ jobs:
 
       - name: SDL2_ttf
         run: |
-          brew --prefix sdl2_ttf
-          ls /opt/homebrew/opt/sdl2_ttf/include/SDL2/SDL_ttf.h
-          ls /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
+          find / -name SDL_ttf.h
           
       - name: Clone FreeRDP repository
         run: |
