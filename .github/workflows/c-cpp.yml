@@ -17,7 +17,6 @@ jobs:
         run: |
           # 安装 Homebrew（如果尚未安装）
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
           # 安装构建工具和依赖项
           brew install \
             ffmpeg \
@@ -25,7 +24,6 @@ jobs:
             opus \
             cairo \
             json-c \
-            libsystemd \
             pkg-config \
             cmake \
             ninja
@@ -49,7 +47,7 @@ jobs:
             -DWITH_FFMPEG=ON \
             -DWITH_OPUS=ON \
             -DWITH_JSONC=ON \
-            -DWITH_SYSTEMD=ON \
+            -DWITH_LIBSYSTEMD=OFF \
             -G Ninja
 
       - name: Build and install
