@@ -26,7 +26,15 @@ jobs:
             json-c \
             pkg-config \
             cmake \
-            ninja
+            ninja \
+            sdl3 \
+            sdl2_ttf
+
+      - name: Set environment variables for SDL3 and SDL2_ttf
+        run: |
+          echo "CMAKE_PREFIX_PATH=/opt/homebrew/opt/sdl3:/opt/homebrew/opt/sdl2_ttf:$CMAKE_PREFIX_PATH" >> $GITHUB_ENV
+          echo "SDL3_DIR=/opt/homebrew/opt/sdl3/share/cmake/SDL3" >> $GITHUB_ENV
+          echo "SDL2_ttf_DIR=/opt/homebrew/opt/sdl2_ttf/share/cmake/SDL2_ttf" >> $GITHUB_ENV
 
       - name: Clone FreeRDP repository
         run: |
