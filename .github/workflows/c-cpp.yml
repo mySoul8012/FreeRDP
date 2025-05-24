@@ -81,7 +81,7 @@ jobs:
 
       - name: Copy built binary to output folder
         run: |
-          ls FreeRDP/build/client
+          ls FreeRDP/build/client/SDL
 
         
 
