@@ -9,6 +9,10 @@ jobs:
   build:
     runs-on: macos-latest
 
+    env:
+      SDL2_TTF_INCLUDE_DIRS: /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
+      SDL2_TTF_LIBRARIES: /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,6 +37,12 @@ jobs:
       - name: Clone FreeRDP repository
         run: |
           git clone https://github.com/FreeRDP/FreeRDP.git
+
+
+      - name: ls FreeRDP
+        run: |
+          ls /opt/homebrew/Cellar/sdl2_ttf/2.24.0/include/SDL2
+          ls /opt/homebrew/opt/sdl2_ttf/lib/libSDL2_ttf.dylib
 
       - name: Create build directory
         run: |
