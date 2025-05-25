@@ -78,6 +78,8 @@ jobs:
           mkdir build
 
       - name: Configure build options
+        env:
+          PKG_CONFIG_PATH: ${{ github.workspace }}/ffmpeg-src/ffmpeg_custom/lib/pkgconfig
         run: |
           cd FreeRDP/build
            cmake .. \
@@ -98,7 +100,7 @@ jobs:
                 -DWITH_STATIC_PLUGINS=ON \
                 -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
-                -DCMAKE_PREFIX_PATH=$(pwd)/ffmpeg-src/ffmpeg_custom
+                -DCMAKE_PREFIX_PATH=${{ github.workspace }}/ffmpeg-src/ffmpeg_custom \
                 -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
                 -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
                 -G Ninja
