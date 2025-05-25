@@ -80,21 +80,29 @@ jobs:
         run: |
           cd FreeRDP/build
           ninja
-
-      - name: Copy built binary to output folder
+          
+      - name: Bundle binary with dependent dylibs and fix paths1
         run: |
-          ls FreeRDP/build/client/SDL/SDL2
-
-      - name: Create archive of build directory
-        run: |
-          tar -czvf freerdp-build.tar.gz -C FreeRDP/build .
+          cd FreeRDP/build/client/SDL/SDL2
+          mkdir -p bundle/lib
+          cp sdl-freerdp bundle/
+          deps=$(otool -L sdl-freerdp | grep dylib | awk '{print $1}' | grep -v /System)
+          for dylib in $deps; do
+            cp "$dylib" bundle/lib/
+          done
+          for dylib in bundle/lib/*.dylib; do
+            dylibname=$(basename "$dylib")
+            install_name_tool -change "$dylib" "@executable_path/lib/$dylibname" bundle/sdl-freerdp
+          done
+          install_name_tool -id "@executable_path/lib/$(basename bundle/sdl-freerdp)" bundle/sdl-freerdp
+          cd bundle
+          tar -czvf ../../freerdp-bundle.tar.gz .
 
       - name: Upload archive as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: freerdp-build-artifact
-          path: freerdp-build.tar.gz
-
+          name: freerdp-bundle-artifact
+          path: FreeRDP/build/freerdp-bundle.tar.gz
         
 
 
