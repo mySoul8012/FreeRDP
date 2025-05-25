@@ -113,6 +113,11 @@ jobs:
           </plist>
           EOF
 
+      - name: Install dylibbundler
+        run: |
+          brew install dylibbundler
+
+
       - name: Bundle dylibs with dylibbundler
         run: |
           dylibbundler -od -b -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
