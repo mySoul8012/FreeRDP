@@ -86,24 +86,54 @@ jobs:
           ninja
           ninja install
           
-      - name: Fix @rpath in bundled binary
+      - name: Create .app bundle directory
         run: |
-          cd FreeRDP/build/bundle/bin
-          install_name_tool -add_rpath @executable_path/../lib sdl-freerdp
+          mkdir -p MyFreeRDP.app/Contents/MacOS
+          mkdir -p MyFreeRDP.app/Contents/Frameworks
+          mkdir -p MyFreeRDP.app/Contents/Resources
+          cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
 
-      - name: Create archive of bundle
+      - name: Create Info.plist
         run: |
-          ls FreeRDP/build
+          cat <<EOF > MyFreeRDP.app/Contents/Info.plist
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+             "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>CFBundleExecutable</key>
+              <string>sdl-freerdp</string>
+              <key>CFBundleIdentifier</key>
+              <string>org.freerdp.sdl</string>
+              <key>CFBundleName</key>
+              <string>FreeRDP SDL</string>
+              <key>CFBundleVersion</key>
+              <string>1.0</string>
+          </dict>
+          </plist>
+          EOF
 
-      - name: Create archive of build directory
+      - name: Bundle dylibs with dylibbundler
         run: |
-          cd FreeRDP
-          tar -czvf build.tar.gz build
+          dylibbundler -od -b -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
+            -d MyFreeRDP.app/Contents/Frameworks \
+            -p @executable_path/../Frameworks
 
-      - name: Upload build archive artifact
+      - name: Create DMG
+        run: |
+          mkdir dmg_output
+          create-dmg \
+            --volname "FreeRDP Client" \
+            --window-pos 200 120 \
+            --window-size 500 300 \
+            --icon-size 100 \
+            --app-drop-link 400 150 \
+            MyFreeRDP.app dmg_output/
+
+      - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
-          name: freerdp-build
-          path: FreeRDP/build.tar.gz
+          name: freerdp-dmg
+          path: dmg_output/*.dmg
 
 
