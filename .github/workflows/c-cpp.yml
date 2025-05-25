@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on:  macos-12
+    runs-on:  macos-13
 
 
 
@@ -31,6 +31,24 @@ jobs:
             ninja \
             sdl2 \
             sdl2_ttf
+
+      - name: Uninstall default ffmpeg
+        run: |
+          brew uninstall --ignore-dependencies ffmpeg || true
+
+      - name: Build custom FFmpeg (no AVFoundation)
+        run: |
+          git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg-src
+          cd ffmpeg-src
+          ./configure \
+            --prefix=/usr/local/ffmpeg_custom \
+            --enable-shared \
+            --disable-indev=avfoundation \
+            --disable-outdev=avfoundation \
+            --disable-videotoolbox \
+            --disable-securetransport
+          make -j$(sysctl -n hw.ncpu)
+          make install
           
       - name: Clone FreeRDP repository
         run: |
