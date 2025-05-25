@@ -89,6 +89,10 @@ jobs:
 
       - name: Create archive of bundle
         run: |
+          ls FreeRDP
+
+      - name: Create archive of bundle
+        run: |
           cd FreeRDP/build/bundle
           tar -czvf ../../freerdp-bundle.tar.gz .
 
