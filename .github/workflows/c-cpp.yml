@@ -59,26 +59,26 @@ jobs:
       - name: Configure build options
         run: |
           cd FreeRDP/build
-            cmake .. \
-              -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
-              -DWITH_CAIRO=ON \
-              -DWITH_FFMPEG=ON \
-              -DWITH_OPUS=ON \
-              -DWITH_JSONC=ON \
-              -DWITH_LIBSYSTEMD=OFF \
-              -DWITH_SDL2=ON \
-              -DWITH_SDL3=OFF \
-              -DWITH_CLIENT_SDL_VERSIONED=OFF \
-              -DWITH_SDL2_TTF=ON \
-              -DWITH_SDL3_TTF=OFF \
-              -DBUILD_SHARED_LIBS=OFF \
-              -DWITH_STATIC_CHANNELS=ON \
-              -DWITH_STATIC_PLUGINS=ON \
-              -DCMAKE_EXE_LINKER_FLAGS="-static" \
-              -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
-              -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
-              -G Ninja
+           cmake .. \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
+                -DWITH_CAIRO=ON \
+                -DWITH_FFMPEG=ON \
+                -DWITH_OPUS=ON \
+                -DWITH_JSONC=ON \
+                -DWITH_LIBSYSTEMD=OFF \
+                -DWITH_SDL2=ON \
+                -DWITH_SDL3=OFF \
+                -DWITH_CLIENT_SDL_VERSIONED=OFF \
+                -DWITH_SDL2_TTF=ON \
+                -DWITH_SDL3_TTF=OFF \
+                -DBUILD_SHARED_LIBS=OFF \
+                -DWITH_STATIC_CHANNELS=ON \
+                -DWITH_STATIC_PLUGINS=ON \
+                -DCMAKE_EXE_LINKER_FLAGS="-static" \
+                -DCMAKE_C_FLAGS="-I/usr/local/include" \
+                -DCMAKE_CXX_FLAGS="-I/usr/local/include" \
+                -G Ninja
 
       - name: Build and install
         run: |
