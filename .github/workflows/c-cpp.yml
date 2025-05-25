@@ -72,6 +72,10 @@ jobs:
               -DWITH_CLIENT_SDL_VERSIONED=OFF \
               -DWITH_SDL2_TTF=ON \
               -DWITH_SDL3_TTF=OFF \
+              -DBUILD_SHARED_LIBS=OFF \
+              -DWITH_STATIC_CHANNELS=ON \
+              -DWITH_STATIC_PLUGINS=ON \
+              -DCMAKE_EXE_LINKER_FLAGS="-static" \
               -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
               -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
               -G Ninja
