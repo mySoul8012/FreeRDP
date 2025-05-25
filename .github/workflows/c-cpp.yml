@@ -26,6 +26,8 @@ jobs:
             opus \
             cairo \
             json-c \
+            yasm \
+            nasm \
             pkg-config \
             cmake \
             ninja \
