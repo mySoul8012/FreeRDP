@@ -26,48 +26,21 @@ jobs:
             opus \
             cairo \
             json-c \
-            yasm \
-            nasm \
             pkg-config \
             cmake \
             ninja \
             sdl2 \
             sdl2_ttf
-
-      - name: Uninstall default ffmpeg
-        run: |
-          brew uninstall --ignore-dependencies ffmpeg || true
-
-      - name: Build custom FFmpeg (no AVFoundation)
-        run: |
-          git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg-src
-          cd ffmpeg-src
-          ./configure \
-            --prefix=$(pwd)/ffmpeg_custom \
-            --enable-shared \
-            --disable-indev=avfoundation \
-            --disable-outdev=avfoundation \
-            --disable-videotoolbox \
-            --disable-securetransport
-          make -j$(sysctl -n hw.ncpu)
-          make install
-
           
       - name: Clone FreeRDP repository
         run: |
           git clone https://github.com/FreeRDP/FreeRDP.git
-
-
-
       - name: Check SDL_ttf.h
         run: |
           sudo find /usr/local/ -name SDL_ttf.h
-
-
       - name: ls FreeRDP
         run: |
           ls /usr/local/Cellar/sdl2_ttf/2.24.0
-
       - name: ls FreeRDP
         run: |
           ls /usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2
@@ -76,10 +49,7 @@ jobs:
         run: |
           cd FreeRDP
           mkdir build
-
       - name: Configure build options
-        env:
-          PKG_CONFIG_PATH: ${{ github.workspace }}/ffmpeg-src/ffmpeg_custom/lib/pkgconfig
         run: |
           cd FreeRDP/build
            cmake .. \
@@ -98,13 +68,10 @@ jobs:
                 -DBUILD_SHARED_LIBS=OFF \
                 -DWITH_STATIC_CHANNELS=ON \
                 -DWITH_STATIC_PLUGINS=ON \
-                -DCMAKE_OSX_DEPLOYMENT_TARGET=12.0 \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
-                -DCMAKE_PREFIX_PATH=${{ github.workspace }}/ffmpeg-src/ffmpeg_custom \
                 -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
                 -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
                 -G Ninja
-
       - name: Build and install
         run: |
           cd FreeRDP/build
@@ -117,7 +84,6 @@ jobs:
           mkdir -p MyFreeRDP.app/Contents/Frameworks
           mkdir -p MyFreeRDP.app/Contents/Resources
           cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
-
       - name: Create Info.plist
         run: |
           cat <<EOF > MyFreeRDP.app/Contents/Info.plist
@@ -137,27 +103,19 @@ jobs:
           </dict>
           </plist>
           EOF
-
       - name: Install dylibbundler
         run: |
           brew install dylibbundler
-
-
       - name: Bundle dylibs with dylibbundler
         run: |
           dylibbundler -od -b -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
             -d MyFreeRDP.app/Contents/Frameworks \
             -p @executable_path/../Frameworks
-
       - name: Zip MyFreeRDP.app
         run: |
           ditto -c -k --sequesterRsrc --keepParent MyFreeRDP.app MyFreeRDP.zip
-
       - name: Upload ZIP
         uses: actions/upload-artifact@v4
         with:
           name: freerdp-zip
           path: MyFreeRDP.zip
-
-
-
