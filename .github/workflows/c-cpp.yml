@@ -89,17 +89,17 @@ jobs:
 
       - name: Create archive of bundle
         run: |
-          ls FreeRDP
+          ls FreeRDP/build
 
-      - name: Create archive of bundle
+      - name: Create archive of build directory
         run: |
-          cd FreeRDP/build/bundle
-          tar -czvf ../../freerdp-bundle.tar.gz .
+          cd FreeRDP
+          tar -czvf build.tar.gz build
 
-      - name: Upload bundle artifact
+      - name: Upload build archive artifact
         uses: actions/upload-artifact@v4
         with:
-          name: freerdp-bundle
-          path: FreeRDP/build/freerdp-bundle.tar.gz
+          name: freerdp-build
+          path: FreeRDP/build.tar.gz
 
 
