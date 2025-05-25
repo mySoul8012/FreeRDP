@@ -75,7 +75,7 @@ jobs:
                 -DBUILD_SHARED_LIBS=OFF \
                 -DWITH_STATIC_CHANNELS=ON \
                 -DWITH_STATIC_PLUGINS=ON \
-                -DCMAKE_EXE_LINKER_FLAGS="-static" \
+                -DCMAKE_EXE_LINKER_FLAGS="" \
                 -DCMAKE_C_FLAGS="-I/usr/local/include" \
                 -DCMAKE_CXX_FLAGS="-I/usr/local/include" \
                 -G Ninja
