@@ -61,7 +61,7 @@ jobs:
           cd FreeRDP/build
             cmake .. \
               -DCMAKE_BUILD_TYPE=Release \
-              -DCMAKE_INSTALL_PREFIX=/usr/local \
+              -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
               -DWITH_CAIRO=ON \
               -DWITH_FFMPEG=ON \
               -DWITH_OPUS=ON \
@@ -80,29 +80,22 @@ jobs:
         run: |
           cd FreeRDP/build
           ninja
+          ninja install
           
-      - name: Bundle binary with dependent dylibs and fix paths1
+      - name: Fix @rpath in bundled binary
         run: |
-          cd FreeRDP/build/client/SDL/SDL2
-          mkdir -p bundle/lib
-          cp sdl-freerdp bundle/
-          deps=$(otool -L sdl-freerdp | grep dylib | awk '{print $1}' | grep -v /System)
-          for dylib in $deps; do
-            cp "$dylib" bundle/lib/
-          done
-          for dylib in bundle/lib/*.dylib; do
-            dylibname=$(basename "$dylib")
-            install_name_tool -change "$dylib" "@executable_path/lib/$dylibname" bundle/sdl-freerdp
-          done
-          install_name_tool -id "@executable_path/lib/$(basename bundle/sdl-freerdp)" bundle/sdl-freerdp
-          cd bundle
+          cd FreeRDP/build/bundle/bin
+          install_name_tool -add_rpath @executable_path/../lib sdl-freerdp
+
+      - name: Create archive of bundle
+        run: |
+          cd FreeRDP/build/bundle
           tar -czvf ../../freerdp-bundle.tar.gz .
 
-      - name: Upload archive as artifact
+      - name: Upload bundle artifact
         uses: actions/upload-artifact@v4
         with:
-          name: freerdp-bundle-artifact
+          name: freerdp-bundle
           path: FreeRDP/build/freerdp-bundle.tar.gz
-        
 
 
