@@ -31,11 +31,15 @@ jobs:
             ninja \
             sdl2 \
             sdl2_ttf
-          brew install openssl@3
-          find $(brew --prefix openssl@3) -name openssl.cnf
+          
+          
 
-
-
+      - name: brew install openssl@3
+        run: |
+              brew install openssl@3
+      - name: find $(brew --prefix openssl@3) -name openssl.cnf
+        run: |
+              find $(brew --prefix openssl@3) -name openssl.cnf
 
       - name: Export OpenSSL legacy config
         run: |
