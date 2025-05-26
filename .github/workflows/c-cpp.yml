@@ -32,7 +32,8 @@ jobs:
             sdl2 \
             sdl2_ttf
           brew install openssl@3
-          find /usr/local/opt/openssl@3 -name openssl.cnf
+          find $(brew --prefix openssl@3) -name openssl.cnf
+
 
 
 
