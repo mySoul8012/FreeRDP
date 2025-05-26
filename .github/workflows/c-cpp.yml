@@ -40,25 +40,25 @@ jobs:
               echo "OPENSSL_MODULES=$OPENSSL_MODULES" >> $GITHUB_ENV
 
       - name: Patch OpenSSL config to enable legacy provider
-        run: |
-          OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
-          if ! grep -q "legacy = legacy_sect" "$OPENSSL_CONF_FILE"; then
-            cat <<EOF >> "$OPENSSL_CONF_FILE"
+  run: |
+    OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
+    if ! grep -q "legacy = legacy_sect" "$OPENSSL_CONF_FILE"; then
+    cat <<EOF >> "$OPENSSL_CONF_FILE"
 
-              [openssl_init]
-              providers = provider_sect
-              
-              [provider_sect]
-              default = default_sect
-              legacy = legacy_sect
-              
-              [default_sect]
-              activate = 1
-              
-              [legacy_sect]
-              activate = 1
-              EOF
-                        fi
+[openssl_init]
+providers = provider_sect
+
+[provider_sect]
+default = default_sect
+legacy = legacy_sect
+
+[default_sect]
+activate = 1
+
+[legacy_sect]
+activate = 1
+EOF
+    fi
           
       - name: Clone FreeRDP repository
         run: |
