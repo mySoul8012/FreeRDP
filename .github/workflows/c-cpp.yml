@@ -32,12 +32,12 @@ jobs:
             sdl2 \
             sdl2_ttf
 
-            - name: Export OpenSSL legacy config
-              run: |
-                export OPENSSL_CONF=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
-                export OPENSSL_MODULES=$(brew --prefix openssl@3)/lib/ossl-modules
-                echo "OPENSSL_CONF=$OPENSSL_CONF" >> $GITHUB_ENV
-                echo "OPENSSL_MODULES=$OPENSSL_MODULES" >> $GITHUB_ENV
+      - name: Export OpenSSL legacy config
+        run: |
+              export OPENSSL_CONF=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
+              export OPENSSL_MODULES=$(brew --prefix openssl@3)/lib/ossl-modules
+              echo "OPENSSL_CONF=$OPENSSL_CONF" >> $GITHUB_ENV
+              echo "OPENSSL_MODULES=$OPENSSL_MODULES" >> $GITHUB_ENV
 
       - name: Patch OpenSSL config to enable legacy provider
         run: |
