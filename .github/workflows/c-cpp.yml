@@ -31,6 +31,10 @@ jobs:
             ninja \
             sdl2 \
             sdl2_ttf
+          brew install openssl@3
+          find /usr/local/opt/openssl@3 -name openssl.cnf
+
+
 
       - name: Export OpenSSL legacy config
         run: |
