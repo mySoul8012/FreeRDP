@@ -39,7 +39,7 @@ jobs:
               brew install openssl@3
       - name: find $(brew --prefix openssl@3) -name openssl.cnf
         run: |
-              find $(brew --prefix openssl@3) -name openssl.cnf
+              brew --prefix openssl@3
 
       - name: Export OpenSSL legacy config
         run: |
