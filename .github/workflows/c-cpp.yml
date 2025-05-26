@@ -41,23 +41,21 @@ jobs:
 
       - name: Patch OpenSSL config to enable legacy provider
         run: |
-          OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
-          if ! grep -q "legacy = legacy_sect" "$OPENSSL_CONF_FILE"; then
-cat <<EOF >> "$OPENSSL_CONF_FILE"
-[openssl_init]
-providers = provider_sect
-
-[provider_sect]
-default = default_sect
-legacy = legacy_sect
-
-[default_sect]
-activate = 1
-
-[legacy_sect]
-activate = 1
-EOF
-          fi
+            OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
+            if ! grep -q "legacy = legacy_sect" "$OPENSSL_CONF_FILE"; then
+              echo '[openssl_init]' >> "$OPENSSL_CONF_FILE"
+              echo 'providers = provider_sect' >> "$OPENSSL_CONF_FILE"
+              echo '' >> "$OPENSSL_CONF_FILE"
+              echo '[provider_sect]' >> "$OPENSSL_CONF_FILE"
+              echo 'default = default_sect' >> "$OPENSSL_CONF_FILE"
+              echo 'legacy = legacy_sect' >> "$OPENSSL_CONF_FILE"
+              echo '' >> "$OPENSSL_CONF_FILE"
+              echo '[default_sect]' >> "$OPENSSL_CONF_FILE"
+              echo 'activate = 1' >> "$OPENSSL_CONF_FILE"
+              echo '' >> "$OPENSSL_CONF_FILE"
+              echo '[legacy_sect]' >> "$OPENSSL_CONF_FILE"
+              echo 'activate = 1' >> "$OPENSSL_CONF_FILE"
+            fi
           
       - name: Clone FreeRDP repository
         run: |
