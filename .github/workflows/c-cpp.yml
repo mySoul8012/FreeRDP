@@ -40,6 +40,9 @@ jobs:
       - name: find $(brew --prefix openssl@3) -name openssl.cnf
         run: |
               brew --prefix openssl@3
+              ls /usr/local/opt/openssl@3
+              ls /usr/local/opt/openssl@3/etc/
+              ls /usr/local/opt/openssl@3/etc/openssl
 
       - name: Export OpenSSL legacy config
         run: |
