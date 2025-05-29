@@ -36,56 +36,14 @@ jobs:
 
       - name: brew install openssl@3
         run: |
-              brew install openssl@3
+              git clone https://github.com/openssh/openssh-portable.git
+              cd openssh-portable
+              autoreconf
+              ./configure --prefix=/usr/local --with-ssl-dir=$(brew --prefix openssl@3)
+              make
+              sudo make install
 
-      - name: Ensure openssl.cnf exists and patch it
-        run: |
-          OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl/openssl.cnf
-          # 检查 openssl.cnf 文件是否存在
-          if [ ! -f "$OPENSSL_CONF_FILE" ]; then
-            echo "openssl.cnf does not exist, creating a new one."
-            mkdir -p $(brew --prefix openssl@3)/etc/openssl
-            # 使用 echo 创建并写入 openssl.cnf 文件
-            echo "[openssl_init]" > "$OPENSSL_CONF_FILE"
-            echo "providers = provider_sect" >> "$OPENSSL_CONF_FILE"
-            echo "" >> "$OPENSSL_CONF_FILE"
-            echo "[provider_sect]" >> "$OPENSSL_CONF_FILE"
-            echo "default = default_sect" >> "$OPENSSL_CONF_FILE"
-            echo "legacy = legacy_sect" >> "$OPENSSL_CONF_FILE"
-            echo "" >> "$OPENSSL_CONF_FILE"
-            echo "[default_sect]" >> "$OPENSSL_CONF_FILE"
-            echo "activate = 1" >> "$OPENSSL_CONF_FILE"
-            echo "" >> "$OPENSSL_CONF_FILE"
-            echo "[legacy_sect]" >> "$OPENSSL_CONF_FILE"
-            echo "activate = 1" >> "$OPENSSL_CONF_FILE"
-          else
-            echo "openssl.cnf already exists, skipping creation."
-          fi
 
-      - name: Export OpenSSL legacy config
-        run: |
-              export OPENSSL_CONF=$(brew --prefix openssl@3)/etc/openssl@3/openssl.cnf
-              export OPENSSL_MODULES=$(brew --prefix openssl@3)/lib/ossl-modules
-              echo "OPENSSL_CONF=$OPENSSL_CONF" >> $GITHUB_ENV
-              echo "OPENSSL_MODULES=$OPENSSL_MODULES" >> $GITHUB_ENV
-
-      - name: Patch OpenSSL config to enable legacy provider
-        run: |
-          OPENSSL_CONF_FILE=$(brew --prefix openssl@3)/etc/openssl/openssl.cnf
-          if ! grep -q "legacy = legacy_sect" "$OPENSSL_CONF_FILE"; then
-            echo '[openssl_init]' >> "$OPENSSL_CONF_FILE"
-            echo 'providers = provider_sect' >> "$OPENSSL_CONF_FILE"
-            echo '' >> "$OPENSSL_CONF_FILE"
-            echo '[provider_sect]' >> "$OPENSSL_CONF_FILE"
-            echo 'default = default_sect' >> "$OPENSSL_CONF_FILE"
-            echo 'legacy = legacy_sect' >> "$OPENSSL_CONF_FILE"
-            echo '' >> "$OPENSSL_CONF_FILE"
-            echo '[default_sect]' >> "$OPENSSL_CONF_FILE"
-            echo 'activate = 1' >> "$OPENSSL_CONF_FILE"
-            echo '' >> "$OPENSSL_CONF_FILE"
-            echo '[legacy_sect]' >> "$OPENSSL_CONF_FILE"
-            echo 'activate = 1' >> "$OPENSSL_CONF_FILE"
-          fi
           
       - name: Clone FreeRDP repository
         run: |
