@@ -32,7 +32,11 @@ jobs:
             sdl2 \
             sdl2_ttf
           
-          
+
+      - name: brew install o555
+        run: |
+              brew install automake
+
 
       - name: brew install openssl@3
         run: |
