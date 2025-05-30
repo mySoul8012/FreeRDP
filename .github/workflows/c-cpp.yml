@@ -105,6 +105,11 @@ jobs:
           ninja
           ninja install
 
+      - name: ls app
+        run: |
+          ls FreeRDP/
+          ls FreeRDP/build
+
       - name: Create .app bundle directory
         run: |
           mkdir -p MyFreeRDP.app/Contents/MacOS
