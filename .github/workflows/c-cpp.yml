@@ -32,12 +32,9 @@ jobs:
             sdl2 \
             sdl2_ttf
           
-
       - name: brew install o555
         run: |
               brew install automake
-
-
       - name: brew install openssl@3
         run: |
               git clone https://github.com/openssh/openssh-portable.git
@@ -46,8 +43,6 @@ jobs:
               ./configure --prefix=/usr/local --with-ssl-dir=$(brew --prefix openssl@3)
               make
               sudo make install
-
-
           
       - name: Clone FreeRDP repository
         run: |
@@ -66,69 +61,43 @@ jobs:
         run: |
           cd FreeRDP
           mkdir build
-
       - name: Configure build options
         run: |
           cd FreeRDP/build
-          cmake .. \
-               -DCMAKE_BUILD_TYPE=Release \
-               -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
-               -DWITH_CAIRO=ON \
-               -DWITH_FFMPEG=ON \
-               -DWITH_OPUS=ON \
-               -DWITH_JSONC=ON \
-               -DWITH_LIBSYSTEMD=OFF \
-               -DWITH_SDL2=OFF \
-               -DWITH_SDL3=ON \
-               -DWITH_CLIENT_SDL_VERSIONED=ON \
-               -DWITH_SDL2_TTF=OFF \
-               -DWITH_SDL3_TTF=ON \
-               -DWITH_OPENSSL=ON \
-               -DOPENSSL_ROOT_DIR=$(brew --prefix openssl@3) \
-               -DBUILD_SHARED_LIBS=OFF \
-               -DWITH_STATIC_CHANNELS=ON \
-               -DWITH_STATIC_PLUGINS=ON \
-               -DCMAKE_EXE_LINKER_FLAGS="" \
-               -DCMAKE_C_FLAGS="-I/usr/local/include \
-                                -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 \
-                                -I/System/Volumes/Data/usr/local/include \
-                                -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
-               -DCMAKE_CXX_FLAGS="-I/usr/local/include \
-                                  -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 \
-                                  -I/System/Volumes/Data/usr/local/include \
-                                  -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
-               -G Ninja
-
+           cmake .. \
+                -DCMAKE_BUILD_TYPE=Release \
+                -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
+                -DWITH_CAIRO=ON \
+                -DWITH_FFMPEG=ON \
+                -DWITH_OPUS=ON \
+                -DWITH_JSONC=ON \
+                -DWITH_LIBSYSTEMD=OFF \
+                -DWITH_SDL2=ON \
+                -DWITH_SDL3=OFF \
+                -DWITH_CLIENT_SDL_VERSIONED=OFF \
+                -DWITH_SDL2_TTF=ON \
+                -DWITH_SDL3_TTF=OFF \
+                -DWITH_OPENSSL=ON \
+                -DOPENSSL_ROOT_DIR=$(brew --prefix openssl@3) \
+                -DBUILD_SHARED_LIBS=OFF \
+                -DWITH_STATIC_CHANNELS=ON \
+                -DWITH_STATIC_PLUGINS=ON \
+                -DCMAKE_EXE_LINKER_FLAGS="" \
+                -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
+                -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
+                -G Ninja
       - name: Build and install
         run: |
           cd FreeRDP/build
           ninja
           ninja install
-
-      - name: ls app
-        run: |
-          ls FreeRDP/
-
-      - name: ls app
-        run: |
-          ls FreeRDP/build
-
-      - name: ls app
-        run: |
-          ls FreeRDP/build/bundle
-
-      - name: ls app
-        run: |
-          ls FreeRDP/build/bundle/bin/
-
+          
       - name: Create .app bundle directory
         run: |
           mkdir -p MyFreeRDP.app/Contents/MacOS
           mkdir -p MyFreeRDP.app/Contents/Frameworks
           mkdir -p MyFreeRDP.app/Contents/Resources
-          # 复制 SDL3 客户端二进制并重命名为可执行文件
-          cp FreeRDP/build/bundle/bin/sdl3-freerdp MyFreeRDP.app/Contents/MacOS/sdl3-freerdp
-
+          cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
       - name: Create Info.plist
         run: |
           cat <<EOF > MyFreeRDP.app/Contents/Info.plist
@@ -138,32 +107,27 @@ jobs:
           <plist version="1.0">
           <dict>
               <key>CFBundleExecutable</key>
-              <string>sdl3-freerdp</string>
+              <string>sdl-freerdp</string>
               <key>CFBundleIdentifier</key>
-              <string>org.freerdp.sdl3</string>
+              <string>org.freerdp.sdl</string>
               <key>CFBundleName</key>
-              <string>FreeRDP SDL3</string>
+              <string>FreeRDP SDL</string>
               <key>CFBundleVersion</key>
               <string>1.0</string>
           </dict>
           </plist>
           EOF
-
       - name: Install dylibbundler
         run: |
           brew install dylibbundler
-
       - name: Bundle dylibs with dylibbundler
         run: |
-          dylibbundler -od -b \
-            -x MyFreeRDP.app/Contents/MacOS/sdl3-freerdp \
+          dylibbundler -od -b -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
             -d MyFreeRDP.app/Contents/Frameworks \
             -p @executable_path/../Frameworks
-
       - name: Zip MyFreeRDP.app
         run: |
           ditto -c -k --sequesterRsrc --keepParent MyFreeRDP.app MyFreeRDP.zip
-
       - name: Upload ZIP
         uses: actions/upload-artifact@v4
         with:
