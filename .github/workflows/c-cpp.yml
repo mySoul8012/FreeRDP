@@ -80,7 +80,7 @@ jobs:
                -DWITH_LIBSYSTEMD=OFF \
                -DWITH_SDL2=OFF \
                -DWITH_SDL3=ON \
-               -DWITH_CLIENT_SDL_VERSIONED=OFF \
+               -DWITH_CLIENT_SDL_VERSIONED=ON \
                -DWITH_SDL2_TTF=OFF \
                -DWITH_SDL3_TTF=ON \
                -DWITH_OPENSSL=ON \
