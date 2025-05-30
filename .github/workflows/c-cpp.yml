@@ -102,6 +102,15 @@ jobs:
           cp -R /Volumes/SDL2_ttf/SDL2_ttf.framework SDL2_ttf-macos/
           hdiutil detach /Volumes/SDL2_ttf -quiet
 
+
+      - name: Build and install
+        run: |
+          cd FreeRDP/build
+          ninja
+          ninja install
+          # 列出 bundle/bin 里的所有可执行文件，验证是否同时有 sdl2-freerdp 和 sdl3-freerdp
+          ls ${PWD}/bundle/bin/
+
       - name: Create .app bundle structure
         run: |
           ls /Users/runner/work/FreeRDP/FreeRDP/FreeRDP/build
