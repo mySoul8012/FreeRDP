@@ -110,6 +110,10 @@ jobs:
           ls FreeRDP/
           ls FreeRDP/build
 
+      - name: ls app
+        run: |
+          ls FreeRDP/build
+
       - name: Create .app bundle directory
         run: |
           mkdir -p MyFreeRDP.app/Contents/MacOS
