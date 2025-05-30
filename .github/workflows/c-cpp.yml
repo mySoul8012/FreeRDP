@@ -86,35 +86,33 @@ jobs:
                 -G Ninja
 
 
-      - name: Download official SDL2 runtime
+      - name: Download & mount SDL2.dmg
         run: |
-          curl -L -o SDL2-2.0.26-macos.zip \
-            https://www.libsdl.org/release/SDL2-2.0.26-macos.zip
-          unzip SDL2-2.0.26-macos.zip -d SDL2-macos
+          curl -L -o SDL2-2.0.26.dmg https://www.libsdl.org/release/SDL2-2.0.26.dmg
+          hdiutil attach SDL2-2.0.26.dmg -nobrowse -quiet
+          mkdir -p SDL2-macos
+          cp -R /Volumes/SDL2/SDL2.framework SDL2-macos/
+          hdiutil detach /Volumes/SDL2 -quiet
 
       - name: Download official SDL2_ttf runtime
         run: |
           curl -L -o SDL2_ttf-2.20.2-macos.tar.gz \
             https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.20.2-macos.tar.gz
+          mkdir -p SDL2_ttf-macos
           tar xzf SDL2_ttf-2.20.2-macos.tar.gz -C SDL2_ttf-macos
 
-      
       - name: Create .app bundle structure
         run: |
           mkdir -p MyFreeRDP.app/Contents/{MacOS,Frameworks,Resources}
           # 拷贝主程序
           cp FreeRDP/build/bundle/bin/sdl-freerdp \
             MyFreeRDP.app/Contents/MacOS/
-          # 拷贝 SDL2 dylibs
-          cp SDL2-macos/*.dylib \
+          # 拷贝 SDL2.framework
+          cp -R SDL2-macos/SDL2.framework \
             MyFreeRDP.app/Contents/Frameworks/
-          # 拷贝 SDL2_ttf dylibs / frameworks
-          # 如果 tar 包里是 dylib:
-          cp SDL2_ttf-macos/*.dylib \
+          # 拷贝 SDL2_ttf.framework
+          cp -R SDL2_ttf-macos/SDL2_ttf.framework \
             MyFreeRDP.app/Contents/Frameworks/
-          # 如果 tar 包里是 framework（可选，依据实际内容）:
-          # cp -R SDL2_ttf-macos/SDL2_ttf.framework \
-          #   MyFreeRDP.app/Contents/Frameworks/
 
       - name: Fix rpath on sdl-freerdp
         run: |
