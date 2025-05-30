@@ -19,7 +19,7 @@ jobs:
         run: |
           # 安装 Homebrew（如果尚未安装）
           /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-          # 安装构建工具和依赖项（只装 SDL2 及其 TTF）
+          # 安装构建工具和依赖项
           brew install \
             ffmpeg \
             cjson \
@@ -29,62 +29,12 @@ jobs:
             pkg-config \
             cmake \
             ninja \
-            sdl2 \
-            sdl2_ttf
-          
-      - name: brew install o555
-        run: |
-              brew install automake
-      - name: brew install openssl@3
-        run: |
-              git clone https://github.com/openssh/openssh-portable.git
-              cd openssh-portable
-              autoreconf
-              ./configure --prefix=/usr/local --with-ssl-dir=$(brew --prefix openssl@3)
-              make
-              sudo make install
-          
-      - name: Clone FreeRDP repository
-        run: |
-          git clone https://github.com/FreeRDP/FreeRDP.git
-      - name: Check SDL_ttf.h
-        run: |
-          sudo find /usr/local/ -name SDL_ttf.h
-      - name: ls FreeRDP
-        run: |
-          ls /usr/local/Cellar/sdl2_ttf/2.24.0
-      - name: ls FreeRDP
-        run: |
-          ls /usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2
-          
-      - name: Create build directory
-        run: |
-          cd FreeRDP
-          mkdir build
-      - name: Configure build options
-        run: |
-          cd FreeRDP/build
-           cmake .. \
-                -DCMAKE_BUILD_TYPE=Release \
-                -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
-                -DWITH_CAIRO=ON \
-                -DWITH_FFMPEG=ON \
-                -DWITH_OPUS=ON \
-                -DWITH_JSONC=ON \
-                -DWITH_LIBSYSTEMD=OFF \
-                -DWITH_SDL2=ON \
-                -DWITH_SDL3=OFF \
-                -DWITH_CLIENT_SDL_VERSIONED=OFF \
-                -DWITH_SDL2_TTF=ON \
-                -DWITH_SDL3_TTF=OFF \
-                -DWITH_OPENSSL=ON \
-                -DOPENSSL_ROOT_DIR=$(brew --prefix openssl@3) \
-                -DBUILD_SHARED_LIBS=OFF \
-                -DWITH_STATIC_CHANNELS=ON \
-                -DWITH_STATIC_PLUGINS=ON \
-                -DCMAKE_EXE_LINKER_FLAGS="" \
-                -G Ninja
+            automake \
+            dylibbundler
 
+      - name: Install OpenSSL@3
+        run: |
+          brew install openssl@3
 
       - name: Download & mount SDL2.dmg
         run: |
@@ -102,18 +52,49 @@ jobs:
           cp -R /Volumes/SDL2_ttf/SDL2_ttf.framework SDL2_ttf-macos/
           hdiutil detach /Volumes/SDL2_ttf -quiet
 
+      - name: Clone FreeRDP repository
+        run: |
+          git clone https://github.com/FreeRDP/FreeRDP.git
+          
+      - name: Create build directory
+        run: |
+          cd FreeRDP
+          mkdir build
+
+
+      - name: Configure build options
+        run: |
+          cd FreeRDP/build
+          cmake .. \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_INSTALL_PREFIX=${PWD}/bundle \
+            -DWITH_CAIRO=ON \
+            -DWITH_FFMPEG=ON \
+            -DWITH_OPUS=ON \
+            -DWITH_JSONC=ON \
+            -DWITH_LIBSYSTEMD=OFF \
+            -DWITH_SDL2=ON \
+            -DWITH_SDL3=OFF \
+            -DWITH_CLIENT_SDL_VERSIONED=OFF \
+            -DWITH_SDL2_TTF=ON \
+            -DWITH_SDL3_TTF=OFF \
+            -DWITH_OPENSSL=ON \
+            -DOPENSSL_ROOT_DIR=$(brew --prefix openssl@3) \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DWITH_STATIC_CHANNELS=ON \
+            -DWITH_STATIC_PLUGINS=ON \
+            -DCMAKE_C_FLAGS="-F${PWD}/../../SDL2-macos -F${PWD}/../../SDL2_ttf-macos" \
+            -DCMAKE_CXX_FLAGS="-F${PWD}/../../SDL2-macos -F${PWD}/../../SDL2_ttf-macos" \
+            -DCMAKE_EXE_LINKER_FLAGS="-framework SDL2 -framework SDL2_ttf" \
+            -G Ninja
+
 
       - name: Build and install
         run: |
           cd FreeRDP/build
           ninja
           ninja install
-          # 列出 bundle/bin 里的所有可执行文件，验证是否同时有 sdl2-freerdp 和 sdl3-freerdp
           ls ${PWD}/bundle/bin/
-
-      - name: Create .app bundle structure
-        run: |
-          ls /Users/runner/work/FreeRDP/FreeRDP/FreeRDP/build
 
       - name: Create .app bundle structure
         run: |
@@ -121,7 +102,6 @@ jobs:
           cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
           cp -R SDL2-macos/SDL2.framework MyFreeRDP.app/Contents/Frameworks/
           cp -R SDL2_ttf-macos/SDL2_ttf.framework MyFreeRDP.app/Contents/Frameworks/
-
 
       - name: Fix rpath on sdl-freerdp
         run: |
@@ -136,7 +116,6 @@ jobs:
             -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
             -d MyFreeRDP.app/Contents/Frameworks \
             -p @executable_path/../Frameworks
-
 
       - name: Create Info.plist
         run: |
