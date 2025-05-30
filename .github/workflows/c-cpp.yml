@@ -64,6 +64,7 @@ jobs:
 
       - name: Configure build options
         run: |
+          export CMAKE_PREFIX_PATH="${PWD}/SDL2-macos;${PWD}/SDL2_ttf-macos"
           cd FreeRDP/build
           cmake .. \
             -DCMAKE_BUILD_TYPE=Release \
@@ -84,8 +85,9 @@ jobs:
             -DWITH_STATIC_CHANNELS=ON \
             -DWITH_STATIC_PLUGINS=ON \
             -DCMAKE_EXE_LINKER_FLAGS="" \
-            -DCMAKE_PREFIX_PATH="${SDL2_FRAMEWORK_PATH};${SDL2_TTF_FRAMEWORK_PATH}" \
-            -DCMAKE_FRAMEWORK_PATH="${SDL2_FRAMEWORK_PATH};${SDL2_TTF_FRAMEWORK_PATH}" \
+            -DCMAKE_EXE_LINKER_FLAGS="-F${PWD}/../SDL2-macos -F${PWD}/../SDL2_ttf-macos" \
+            -DCMAKE_C_FLAGS="-F${PWD}/../SDL2-macos -F${PWD}/../SDL2_ttf-macos" \
+            -DCMAKE_CXX_FLAGS="-F${PWD}/../SDL2-macos -F${PWD}/../SDL2_ttf-macos" \
             -G Ninja
 
 
