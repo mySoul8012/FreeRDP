@@ -108,11 +108,14 @@ jobs:
       - name: ls app
         run: |
           ls FreeRDP/
-          ls FreeRDP/build
 
       - name: ls app
         run: |
           ls FreeRDP/build
+
+      - name: ls app
+        run: |
+          ls FreeRDP/build/bundle
 
       - name: Create .app bundle directory
         run: |
