@@ -83,29 +83,61 @@ jobs:
                 -DWITH_STATIC_CHANNELS=ON \
                 -DWITH_STATIC_PLUGINS=ON \
                 -DCMAKE_EXE_LINKER_FLAGS="" \
-                -DCMAKE_C_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
-                -DCMAKE_CXX_FLAGS="-I/usr/local/include -I/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2 -I/System/Volumes/Data/usr/local/include -I/System/Volumes/Data/usr/local/Cellar/sdl2_ttf/2.24.0/include/SDL2" \
                 -G Ninja
-      - name: Build and install
+
+
+      - name: Download official SDL2 runtime
         run: |
-          cd FreeRDP/build
-          ninja
-          ninja install
-          
-      - name: Create .app bundle directory
+          curl -L -o SDL2-2.0.26-macos.zip \
+            https://www.libsdl.org/release/SDL2-2.0.26-macos.zip
+          unzip SDL2-2.0.26-macos.zip -d SDL2-macos
+
+      - name: Download official SDL2_ttf runtime
         run: |
-          mkdir -p MyFreeRDP.app/Contents/MacOS
-          mkdir -p MyFreeRDP.app/Contents/Frameworks
-          mkdir -p MyFreeRDP.app/Contents/Resources
-          cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
+          curl -L -o SDL2_ttf-2.20.2-macos.tar.gz \
+            https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.20.2-macos.tar.gz
+          tar xzf SDL2_ttf-2.20.2-macos.tar.gz -C SDL2_ttf-macos
+
+      
+      - name: Create .app bundle structure
+        run: |
+          mkdir -p MyFreeRDP.app/Contents/{MacOS,Frameworks,Resources}
+          # 拷贝主程序
+          cp FreeRDP/build/bundle/bin/sdl-freerdp \
+            MyFreeRDP.app/Contents/MacOS/
+          # 拷贝 SDL2 dylibs
+          cp SDL2-macos/*.dylib \
+            MyFreeRDP.app/Contents/Frameworks/
+          # 拷贝 SDL2_ttf dylibs / frameworks
+          # 如果 tar 包里是 dylib:
+          cp SDL2_ttf-macos/*.dylib \
+            MyFreeRDP.app/Contents/Frameworks/
+          # 如果 tar 包里是 framework（可选，依据实际内容）:
+          # cp -R SDL2_ttf-macos/SDL2_ttf.framework \
+          #   MyFreeRDP.app/Contents/Frameworks/
+
+      - name: Fix rpath on sdl-freerdp
+        run: |
+          install_name_tool \
+            -add_rpath @executable_path/../Frameworks \
+            MyFreeRDP.app/Contents/MacOS/sdl-freerdp
+
+      - name: Bundle remaining dylibs
+        run: |
+          dylibbundler \
+            -od -b \
+            -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
+            -d MyFreeRDP.app/Contents/Frameworks \
+            -p @executable_path/../Frameworks
+
       - name: Create Info.plist
         run: |
           cat <<EOF > MyFreeRDP.app/Contents/Info.plist
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
-             "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
-          <dict>
+            <dict>
               <key>CFBundleExecutable</key>
               <string>sdl-freerdp</string>
               <key>CFBundleIdentifier</key>
@@ -114,20 +146,15 @@ jobs:
               <string>FreeRDP SDL</string>
               <key>CFBundleVersion</key>
               <string>1.0</string>
-          </dict>
+            </dict>
           </plist>
           EOF
-      - name: Install dylibbundler
-        run: |
-          brew install dylibbundler
-      - name: Bundle dylibs with dylibbundler
-        run: |
-          dylibbundler -od -b -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
-            -d MyFreeRDP.app/Contents/Frameworks \
-            -p @executable_path/../Frameworks
+
       - name: Zip MyFreeRDP.app
         run: |
-          ditto -c -k --sequesterRsrc --keepParent MyFreeRDP.app MyFreeRDP.zip
+          ditto -c -k --sequesterRsrc --keepParent \
+            MyFreeRDP.app MyFreeRDP.zip
+
       - name: Upload ZIP
         uses: actions/upload-artifact@v4
         with:
