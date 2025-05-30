@@ -88,31 +88,27 @@ jobs:
 
       - name: Download & mount SDL2.dmg
         run: |
-          curl -L -o SDL2-2.0.26.dmg https://www.libsdl.org/release/SDL2-2.0.26.dmg
-          hdiutil attach SDL2-2.0.26.dmg -nobrowse -quiet
+          curl -L -o SDL2-2.0.22.dmg https://github.com/libsdl-org/SDL/releases/download/release-2.0.22/SDL2-2.0.22.dmg
+          hdiutil attach SDL2-2.0.22.dmg -nobrowse -quiet
           mkdir -p SDL2-macos
           cp -R /Volumes/SDL2/SDL2.framework SDL2-macos/
           hdiutil detach /Volumes/SDL2 -quiet
 
-      - name: Download official SDL2_ttf runtime
+      - name: Download & mount SDL2_ttf.dmg
         run: |
-          curl -L -o SDL2_ttf-2.20.2-macos.tar.gz \
-            https://www.libsdl.org/projects/SDL_ttf/release/SDL2_ttf-2.20.2-macos.tar.gz
+          curl -L -o SDL2_ttf-2.0.18.dmg https://github.com/libsdl-org/SDL_ttf/releases/download/release-2.0.18/SDL2_ttf-2.0.18.dmg
+          hdiutil attach SDL2_ttf-2.0.18.dmg -nobrowse -quiet
           mkdir -p SDL2_ttf-macos
-          tar xzf SDL2_ttf-2.20.2-macos.tar.gz -C SDL2_ttf-macos
+          cp -R /Volumes/SDL2_ttf/SDL2_ttf.framework SDL2_ttf-macos/
+          hdiutil detach /Volumes/SDL2_ttf -quiet
 
       - name: Create .app bundle structure
         run: |
           mkdir -p MyFreeRDP.app/Contents/{MacOS,Frameworks,Resources}
-          # 拷贝主程序
-          cp FreeRDP/build/bundle/bin/sdl-freerdp \
-            MyFreeRDP.app/Contents/MacOS/
-          # 拷贝 SDL2.framework
-          cp -R SDL2-macos/SDL2.framework \
-            MyFreeRDP.app/Contents/Frameworks/
-          # 拷贝 SDL2_ttf.framework
-          cp -R SDL2_ttf-macos/SDL2_ttf.framework \
-            MyFreeRDP.app/Contents/Frameworks/
+          cp FreeRDP/build/bundle/bin/sdl-freerdp MyFreeRDP.app/Contents/MacOS/
+          cp -R SDL2-macos/SDL2.framework MyFreeRDP.app/Contents/Frameworks/
+          cp -R SDL2_ttf-macos/SDL2_ttf.framework MyFreeRDP.app/Contents/Frameworks/
+
 
       - name: Fix rpath on sdl-freerdp
         run: |
@@ -127,6 +123,7 @@ jobs:
             -x MyFreeRDP.app/Contents/MacOS/sdl-freerdp \
             -d MyFreeRDP.app/Contents/Frameworks \
             -p @executable_path/../Frameworks
+
 
       - name: Create Info.plist
         run: |
