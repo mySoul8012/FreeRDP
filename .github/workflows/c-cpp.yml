@@ -83,9 +83,10 @@ jobs:
             -DBUILD_SHARED_LIBS=OFF \
             -DWITH_STATIC_CHANNELS=ON \
             -DWITH_STATIC_PLUGINS=ON \
-            -DCMAKE_C_FLAGS="-F${PWD}/../../SDL2-macos -F${PWD}/../../SDL2_ttf-macos" \
-            -DCMAKE_CXX_FLAGS="-F${PWD}/../../SDL2-macos -F${PWD}/../../SDL2_ttf-macos" \
-            -DCMAKE_EXE_LINKER_FLAGS="-framework SDL2 -framework SDL2_ttf" \
+            -DCMAKE_EXE_LINKER_FLAGS="" \
+            -DCMAKE_C_FLAGS="-F${GITHUB_WORKSPACE}/SDL2-macos -F${GITHUB_WORKSPACE}/SDL2_ttf-macos" \
+            -DCMAKE_CXX_FLAGS="-F${GITHUB_WORKSPACE}/SDL2-macos -F${GITHUB_WORKSPACE}/SDL2_ttf-macos" \
+            -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/SDL2-macos;${GITHUB_WORKSPACE}/SDL2_ttf-macos" \
             -G Ninja
 
 
